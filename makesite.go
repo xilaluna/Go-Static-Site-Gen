@@ -2,27 +2,49 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
+	"text/template"
 )
-
-type paragraph struct {
-	Data string
-}
 
 type Page struct {
 	Heading string
-	Content []paragraph
+	Content string
 }
 
-func readFile() {
-	fileContents, err := ioutil.ReadFile("first-post.txt")
+func readFile(file string) (string){
+	fileContents, err := os.ReadFile(file)
 	if err != nil {
 		panic(err)
 	}
 	fmt.Print(string(fileContents))
+	return (string(fileContents))
 }
 
+func writeFile(contents string) {
+	data := []byte(contents)
+	err := os.WriteFile("newfile.txt", data, 0644)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func writeTemplate(contents string) {
+	page := Page{
+		Heading: "New Page",
+		Content: contents,
+	}
+	t := template.Must(template.New("template.tmpl").ParseFiles("template.tmpl"))
+	newfile, err := os.Create("new.html")
+	if err != nil {
+		panic(err)
+	}
+	t.Execute(newfile, page)
+}
+
+
 func main() {
-	readFile()
+	contents := readFile("first-post.txt")
+	writeTemplate(contents)
+
 	fmt.Println("Hello, world!")
 }
