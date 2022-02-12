@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"text/template"
@@ -16,7 +17,6 @@ func readFile(file string) (string){
 	if err != nil {
 		panic(err)
 	}
-	fmt.Print(string(fileContents))
 	return (string(fileContents))
 }
 
@@ -43,7 +43,9 @@ func writeTemplate(contents string) {
 
 
 func main() {
-	contents := readFile("first-post.txt")
+	file := flag.String("file", "none.txt", "Enter file name")
+	flag.Parse()
+	contents := readFile(*file)
 	writeTemplate(contents)
 
 	fmt.Println("Hello, world!")
