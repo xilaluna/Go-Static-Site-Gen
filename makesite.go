@@ -6,6 +6,8 @@ import (
 	"path/filepath"
 	"strings"
 	"text/template"
+
+	"github.com/gomarkdown/markdown"
 )
 
 type Page struct {
@@ -19,6 +21,19 @@ func readFile(file string) (string){
 		panic(err)
 	}
 	return (string(fileContents))
+}
+
+func mdToHtml(file string) {
+	fileContents, err := os.ReadFile(file)
+	if err != nil {
+		panic(err)
+	}
+	html := markdown.ToHTML(fileContents, nil, nil)
+
+	writeErr := os.WriteFile("test.html", html, 0644)
+	if writeErr != nil {
+		panic(writeErr)
+	}
 }
 
 func writeFile(contents string) {
@@ -58,13 +73,15 @@ func writeFromDir(directory string) {
 }
 
 func main() {
-	// file := flag.String("file", "none.txt", "Enter file name")
-	dir := flag.String("dir", ".", "Enter the directory path")
+	file := flag.String("file", "TEST.md", "Enter file name")
+	// dir := flag.String("dir", ".", "Enter the directory path")
 
-	flag.Parse()
+	// flag.Parse()
 
-	writeFromDir(*dir)
+	// writeFromDir(*dir)
 
 	// contents := readFile(*file)
 	// writeTemplate(contents)
+
+	mdToHtml(*file)
 }
