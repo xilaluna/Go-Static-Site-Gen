@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"path/filepath"
 	"text/template"
 )
 
@@ -41,12 +42,26 @@ func writeTemplate(contents string) {
 	t.Execute(newfile, page)
 }
 
+func listTextFiles(directory string) {
+	files, err := os.ReadDir(directory)
+	if err != nil {
+		panic(err)
+	}
+	for _, file := range files {
+		if filepath.Ext(file.Name()) == ".txt" {
+			fmt.Printf("%v \n", file.Name())
+		}
+	}
+}
 
 func main() {
-	file := flag.String("file", "none.txt", "Enter file name")
-	flag.Parse()
-	contents := readFile(*file)
-	writeTemplate(contents)
+	// file := flag.String("file", "none.txt", "Enter file name")
+	dir := flag.String("dir", ".", "Enter the directory path")
 
-	fmt.Println("Hello, world!")
+	flag.Parse()
+
+	listTextFiles(*dir)
+
+	// contents := readFile(*file)
+	// writeTemplate(contents)
 }
