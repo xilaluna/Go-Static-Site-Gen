@@ -2,9 +2,9 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"text/template"
 )
 
@@ -29,27 +29,30 @@ func writeFile(contents string) {
 	}
 }
 
-func writeTemplate(contents string) {
+func createHtmlFile(contents string, filename string) {
 	page := Page{
 		Heading: "New Page",
 		Content: contents,
 	}
 	t := template.Must(template.New("template.tmpl").ParseFiles("template.tmpl"))
-	newfile, err := os.Create("new.html")
+	htmlFileName := filename + ".html"
+	newfile, err := os.Create(htmlFileName)
 	if err != nil {
 		panic(err)
 	}
 	t.Execute(newfile, page)
 }
 
-func listTextFiles(directory string) {
+func writeFromDir(directory string) {
 	files, err := os.ReadDir(directory)
 	if err != nil {
 		panic(err)
 	}
 	for _, file := range files {
 		if filepath.Ext(file.Name()) == ".txt" {
-			fmt.Printf("%v \n", file.Name())
+			contents := readFile(file.Name())
+			formatFileName := strings.Split(file.Name(), ".")[0]
+			createHtmlFile(contents, formatFileName)
 		}
 	}
 }
@@ -60,7 +63,7 @@ func main() {
 
 	flag.Parse()
 
-	listTextFiles(*dir)
+	writeFromDir(*dir)
 
 	// contents := readFile(*file)
 	// writeTemplate(contents)
